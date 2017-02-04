@@ -1,12 +1,38 @@
-﻿<Window x:Class="VideoConverter.MainWindow"
+﻿<Window x:Name="MainWindow1" x:Class="VideoConverter.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VideoConverter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="406" Width="623" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded">
     <Grid>
-        
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Width="617" ClipToBounds="True" SnapsToDevicePixels="True">
+            <TabItem Header="Jobs">
+                <Grid Background="White" />
+            </TabItem>
+            <TabItem Header="Optionen">
+                <Grid Background="White" Margin="0,1,0,-1">
+                    <GroupBox x:Name="groupBox" Header="Status" HorizontalAlignment="Left" VerticalAlignment="Top" Height="104" Width="167">
+                        <Grid HorizontalAlignment="Left" Height="84" VerticalAlignment="Top" Width="185" Margin="0,0,-30,-2">
+                            <Label x:Name="label2" Content="FFmpeg:" HorizontalAlignment="Left" Margin="1,6,0,0" VerticalAlignment="Top" />
+                            <Label x:Name="label3" Content="FFplay:" HorizontalAlignment="Left" Margin="1,32,0,0" VerticalAlignment="Top" />
+                            <Label x:Name="label4" Content="FFprobe:" HorizontalAlignment="Left" Margin="1,58,0,0" VerticalAlignment="Top" />
+                            <Label x:Name="label_settings_status_ffmpeg" Content="nicht gefunden" HorizontalAlignment="Center" Margin="71,6,24,0" VerticalAlignment="Top" Foreground="Red" />
+                            <Label x:Name="label_settings_status_ffplay" Content="nicht gefunden" HorizontalAlignment="Center" Margin="71,32,24,0" VerticalAlignment="Top" Foreground="Red" />
+                            <Label x:Name="label_settings_status_ffprobe" Content="nicht gefunden" HorizontalAlignment="Center" Margin="71,58,24,0" VerticalAlignment="Top" Foreground="Red" />
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="groupBox1" Header="Download/Update" HorizontalAlignment="Left" Margin="0,104,0,0" VerticalAlignment="Top" Height="85" Width="252">
+                        <Grid Margin="0,0,-2,-2">
+                            <ProgressBar x:Name="progressbar_settings_download_dlProgress" HorizontalAlignment="Left" Height="20" Margin="1,10,0,0" VerticalAlignment="Top" Width="100" />
+                            <Button x:Name="button_settings_download_dlFFmpeg" Content="FFMpeg downloaden" HorizontalAlignment="Left" Margin="111,10,0,0" VerticalAlignment="Top" Width="125" Height="20" Click="button_settings_download_dlFFmpeg_Click" />
+                            <Label x:Name="label_settings_download_dlProgress" Content="0 %" HorizontalAlignment="Left" Margin="36,7,0,0" VerticalAlignment="Top" />
+                            <Label x:Name="label_settings_download_currentVersion" Content="aktuelle Version: N-81997-g4599e11" HorizontalAlignment="Left" Margin="1,38,0,0" VerticalAlignment="Top" Width="205" />
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

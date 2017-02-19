@@ -51,24 +51,27 @@ namespace VideoConverter
 
         private void SetProgress( object sender, DownloadProgressChangedEventArgs e )
         {
-            nProgress = e.ProgressPercentage;
+            nProgress = e.ProgressPercentage / 2;
         }
 
         private void SetupFiles()
         {
-            nProgress = 100;
+            nProgress = 50;
             ZipFile zip = ZipFile.Read( "Update.zip" );
             zip.FlattenFoldersOnExtract = true;
-
+            nProgress += 12;
             zip[ 3 ].Extract( Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently );
+            nProgress += 12;
             zip[ 4 ].Extract( Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently );
+            nProgress += 12;
             zip[ 5 ].Extract( Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently );
+            nProgress += 14;
 
             zip.Dispose();
             if(File.Exists( "Update.zip" ))
             {
                 File.Delete( "Update.zip" );
-            }            
+            }                        
         }
     }
 }

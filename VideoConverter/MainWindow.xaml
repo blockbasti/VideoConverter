@@ -3,17 +3,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:VideoConverter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="406" Width="623" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded">
+        Title="MainWindow" Height="601" Width="1003" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" WindowStartupLocation="CenterScreen">
     <Grid>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Width="617" ClipToBounds="True" SnapsToDevicePixels="True">
+        <TabControl x:Name="tabControl" ClipToBounds="True" SnapsToDevicePixels="True">
             <TabItem Header="Jobs">
-                <Grid Background="White" />
+                <Grid Background="White" Margin="0,0,-204,0" HorizontalAlignment="Left" Width="990">
+                    <DataGrid x:Name="dataGrid_jobs" Margin="10,10,408,10" BorderThickness="1" GridLinesVisibility="Horizontal" SelectionMode="Single" AlternatingRowBackground="#FFA3C795" IsReadOnly="True" AutoGenerateColumns="False" SelectedIndex="0" IsSynchronizedWithCurrentItem="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding name}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Name" Width="100" />
+                            <DataGridTextColumn Binding="{Binding type}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Typ" Width="70" />
+                            <DataGridTextColumn Binding="{Binding path}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Pfad" Width="300" />
+                            <DataGridTextColumn Binding="{Binding target}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Zielformat" Width="100" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button x:Name="button" Content="add Test Item" HorizontalAlignment="Left" Margin="652,473,0,0" VerticalAlignment="Top" Width="130" Click="button_Click" />
+                    <Button x:Name="button_preview" Content="Vorschau" HorizontalAlignment="Left" Margin="652,401,0,0" VerticalAlignment="Top" Width="75" Click="button_preview_Click" />
+                    <CheckBox x:Name="checkBox_fullscreen" Content="Vollbild" HorizontalAlignment="Left" Margin="732,405,0,0" VerticalAlignment="Top" IsChecked="True" />
+                </Grid>
             </TabItem>
             <TabItem Header="Optionen">
                 <Grid Background="White" Margin="0,1,0,-1">
-                    <GroupBox x:Name="groupBox" Header="Status" HorizontalAlignment="Left" VerticalAlignment="Top" Height="104" Width="167">
+                    <GroupBox x:Name="groupBox" Header="Status" HorizontalAlignment="Left" VerticalAlignment="Top" Height="122" Width="167" Margin="5,5,0,0">
                         <Grid HorizontalAlignment="Left" Height="84" VerticalAlignment="Top" Width="185" Margin="0,0,-30,-2">
                             <Label x:Name="label2" Content="FFmpeg:" HorizontalAlignment="Left" Margin="1,6,0,0" VerticalAlignment="Top" />
                             <Label x:Name="label3" Content="FFplay:" HorizontalAlignment="Left" Margin="1,32,0,0" VerticalAlignment="Top" />
@@ -23,12 +36,16 @@
                             <Label x:Name="label_settings_status_ffprobe" Content="nicht gefunden" HorizontalAlignment="Center" Margin="71,58,24,0" VerticalAlignment="Top" Foreground="Red" />
                         </Grid>
                     </GroupBox>
-                    <GroupBox x:Name="groupBox1" Header="Download/Update" HorizontalAlignment="Left" Margin="0,104,0,0" VerticalAlignment="Top" Height="85" Width="252">
+                    <GroupBox x:Name="groupBox1" Header="Download/Update" HorizontalAlignment="Left" Margin="5,132,0,0" VerticalAlignment="Top" Height="105" Width="252">
                         <Grid Margin="0,0,-2,-2">
-                            <ProgressBar x:Name="progressbar_settings_download_dlProgress" HorizontalAlignment="Left" Height="20" Margin="1,10,0,0" VerticalAlignment="Top" Width="100" />
+                            <ProgressBar x:Name="progressbar_settings_download_dlProgress" HorizontalAlignment="Left" Height="25" Margin="1,10,0,0" VerticalAlignment="Top" Width="100">
+                                <ProgressBar.Background>
+                                    <SolidColorBrush Color="#FFE6E6E6" />
+                                </ProgressBar.Background>
+                            </ProgressBar>
                             <Button x:Name="button_settings_download_dlFFmpeg" Content="FFMpeg downloaden" HorizontalAlignment="Left" Margin="111,10,0,0" VerticalAlignment="Top" Width="125" Height="20" Click="button_settings_download_dlFFmpeg_Click" />
-                            <Label x:Name="label_settings_download_dlProgress" Content="0 %" HorizontalAlignment="Left" Margin="36,7,0,0" VerticalAlignment="Top" />
-                            <Label x:Name="label_settings_download_currentVersion" Content="aktuelle Version: N-81997-g4599e11" HorizontalAlignment="Left" Margin="1,38,0,0" VerticalAlignment="Top" Width="205" />
+                            <Label x:Name="label_settings_download_dlProgress" Content="0 %" HorizontalAlignment="Left" Margin="58,10,0,0" VerticalAlignment="Top" Height="25" Width="43" />
+                            <Label x:Name="label_settings_download_currentVersion" Content="aktuelle Version: " HorizontalAlignment="Left" Margin="1,38,0,0" VerticalAlignment="Top" Width="231" />
                         </Grid>
                     </GroupBox>
                 </Grid>

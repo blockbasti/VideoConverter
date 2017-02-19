@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace VideoConverter
@@ -12,24 +7,22 @@ namespace VideoConverter
     /// <summary>
     /// Klasse um mit FFmpeg zu interagieren.
     /// </summary>
-    class ffmpeg
+    internal class ffmpeg
     {
         /// <summary>
         /// Überprüft ob FFmpeg vorhanden ist.
-        /// </summary>  
+        /// </summary>
         public bool bExists()
         {
             return File.Exists( "ffmpeg.exe" );
         }
 
-        private Process ffmpegproc = new Process();
-
-        private string runffmpeg( string cmdline)
+        private string runffmpeg( string cmdline )
         {
             if(bExists())
             {
-                
-                ffmpegproc.StartInfo.FileName = "ffmpeg/ffmpeg.exe";
+                Process ffmpegproc = new Process();
+                ffmpegproc.StartInfo.FileName = "ffmpeg.exe";
                 ffmpegproc.StartInfo.Arguments = cmdline;
                 ffmpegproc.StartInfo.CreateNoWindow = true;
                 ffmpegproc.StartInfo.UseShellExecute = false;
@@ -41,15 +34,15 @@ namespace VideoConverter
             {
                 return "";
             }
-
         }
 
         public string getVersion()
         {
-            string cmdout = runffmpeg( "-version");
-            Regex regex_ffmpeg = new Regex( "[A-Z]-[0-9]*-[a-zA-Z0-9]*", RegexOptions.Compiled );
+            string cmdout = runffmpeg( "-version" );
 
-            return regex_ffmpeg.Match( cmdout ).Value;
+            Regex regexVersion = new Regex( "[A-Z]-[0-9]*-[a-zA-Z0-9]*", RegexOptions.Compiled );
+
+            return regexVersion.Match( cmdout ).Value;
         }
     }
 }

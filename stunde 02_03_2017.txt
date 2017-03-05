@@ -1,0 +1,5 @@
+Statische Funktionen für FFmpeg, FFplay, FFprobe und Updater
+Löschen von Jobs
+Strukturierung des Codes
+Kommentieren
+Optimierungen

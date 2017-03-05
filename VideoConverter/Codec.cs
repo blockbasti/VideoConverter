@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VideoConverter
+﻿namespace VideoConverter
 {
-    class Codec
+    public class Codec
     {
+        public Codec()
+        {
+        }
+    }
+
+    public class h264 : Codec
+    {
+        public h264()
+        {
+        }
     }
 }

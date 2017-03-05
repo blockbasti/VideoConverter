@@ -12,23 +12,27 @@ namespace VideoConverter
         /// <summary>
         /// Überprüft ob FFmpeg vorhanden ist.
         /// </summary>
-        public bool bExists()
+        public static bool bExists()
         {
             return File.Exists( "ffmpeg.exe" );
         }
 
-        private string runffmpeg( string cmdline )
+        private static Process ffmpegproc = new Process();
+
+        private static string runffmpeg( string cmdline )
         {
             if(bExists())
             {
-                Process ffmpegproc = new Process();
                 ffmpegproc.StartInfo.FileName = "ffmpeg.exe";
                 ffmpegproc.StartInfo.Arguments = cmdline;
                 ffmpegproc.StartInfo.CreateNoWindow = true;
                 ffmpegproc.StartInfo.UseShellExecute = false;
                 ffmpegproc.StartInfo.RedirectStandardOutput = true;
                 ffmpegproc.Start();
-                return ffmpegproc.StandardOutput.ReadToEnd();
+                string output = ffmpegproc.StandardOutput.ReadToEnd();
+                ffmpegproc.WaitForExit();
+                ffmpegproc.Close();
+                return output;
             }
             else
             {
@@ -36,7 +40,11 @@ namespace VideoConverter
             }
         }
 
-        public string getVersion()
+        /// <summary>
+        /// Versionsabfrage
+        /// </summary>
+        /// <returns>Version</returns>
+        public static string getVersion()
         {
             string cmdout = runffmpeg( "-version" );
 

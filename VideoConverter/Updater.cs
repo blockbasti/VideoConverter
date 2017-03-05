@@ -10,8 +10,8 @@ namespace VideoConverter
     /// </summary>
     internal class Updater
     {
-        private int nProgress = 0;
-        private bool b64Bit = false;
+        private static int nProgress = 0;
+        private static bool b64Bit = false;
 
         public Updater( bool _b64Bit = false )
         {
@@ -21,7 +21,7 @@ namespace VideoConverter
         /// <summary>
         /// Lädt FFmpeg herunter oder updatet es.
         /// </summary>
-        public async void UpdateFFmpeg()
+        public static async void UpdateFFmpeg()
         {
             WebClient webc = new WebClient();
             webc.DownloadProgressChanged += new DownloadProgressChangedEventHandler( SetProgress );
@@ -34,27 +34,33 @@ namespace VideoConverter
 
             if(b64Bit)
             {
-                await webc.DownloadFileTaskAsync( "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip", "Update.zip" );                
+                await webc.DownloadFileTaskAsync( "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip", "Update.zip" );
             }
             else
             {
-                await webc.DownloadFileTaskAsync( "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip", "Update.zip" );               
-            }            
-            webc.Dispose();            
+                await webc.DownloadFileTaskAsync( "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip", "Update.zip" );
+            }
+            webc.Dispose();
             SetupFiles();
         }
 
-        public int nGetProgress()
+        /// <summary>
+        /// Fragt den Fortschritt des Updates ab.
+        /// </summary>
+        public static int nGetProgress()
         {
             return nProgress;
         }
 
-        private void SetProgress( object sender, DownloadProgressChangedEventArgs e )
+        private static void SetProgress( object sender, DownloadProgressChangedEventArgs e )
         {
             nProgress = e.ProgressPercentage / 2;
         }
 
-        private void SetupFiles()
+        /// <summary>
+        /// Entpackt die Dateien des Downloads.
+        /// </summary>
+        private static void SetupFiles()
         {
             nProgress = 50;
             ZipFile zip = ZipFile.Read( "Update.zip" );
@@ -71,7 +77,7 @@ namespace VideoConverter
             if(File.Exists( "Update.zip" ))
             {
                 File.Delete( "Update.zip" );
-            }                        
+            }
         }
     }
 }

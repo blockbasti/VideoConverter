@@ -11,11 +11,11 @@
         <TabControl x:Name="tabControl" ClipToBounds="True" SnapsToDevicePixels="True">
             <TabItem Header="Jobs">
                 <Grid Background="White" Margin="0,0,-204,0" HorizontalAlignment="Left" Width="990">
-                    <DataGrid x:Name="dataGrid_jobs" Margin="10,10,393,10" BorderThickness="1" GridLinesVisibility="Horizontal" SelectionMode="Single" AlternatingRowBackground="#FFA3C795" IsReadOnly="True" AutoGenerateColumns="False" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" VerticalScrollBarVisibility="Visible" MouseDoubleClick="dataGrid_jobs_MouseDoubleClick" MouseDown="dataGrid_jobs_MouseDown">
+                    <DataGrid x:Name="dataGrid_jobs" Margin="10,10,393,10" BorderThickness="1" GridLinesVisibility="Horizontal" SelectionMode="Single" AlternatingRowBackground="#FFA3C795" IsReadOnly="True" AutoGenerateColumns="False" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" VerticalScrollBarVisibility="Visible" MouseDoubleClick="dataGrid_jobs_MouseDoubleClick" SelectionChanged="dataGrid_jobs_SelectionChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding name}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Name" Width="100" />
-                            <DataGridTextColumn Binding="{Binding type}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Typ" Width="70" />
-                            <DataGridTextColumn Binding="{Binding path}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Pfad" Width="300" />
+                            <DataGridTextColumn Binding="{Binding type}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Typ" Width="100" />
+                            <DataGridTextColumn Binding="{Binding path}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Pfad" Width="270" />
                             <DataGridTextColumn Binding="{Binding target}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Zielformat" Width="100" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -25,16 +25,16 @@
                     <Button x:Name="button_jobs_addJob" Content="Datei hinzufügen" HorizontalAlignment="Left" Margin="652,353,0,0" VerticalAlignment="Top" Width="110" />
                     <Button x:Name="button_jobs_deleteJob" Content="Job löschen" HorizontalAlignment="Left" Margin="767,353,0,0" VerticalAlignment="Top" Width="80" Click="button_jobs_deleteJob_Click" />
                     <Button x:Name="button_jobs_clear" Content="alle entfernen" HorizontalAlignment="Left" Margin="852,353,0,0" VerticalAlignment="Top" Width="95" Click="button_jobs_clear_Click" />
-                    <Label Content="aktueller Codec:" HorizontalAlignment="Left" Margin="652,33,0,0" VerticalAlignment="Top" />
-                    <Label x:Name="label_jobs_currentCodec" Content="currentCodec" HorizontalAlignment="Left" Margin="767,33,0,0" VerticalAlignment="Top" />
-                    <Label Content="Pfad:" HorizontalAlignment="Left" Margin="711,59,0,0" VerticalAlignment="Top" />
-                    <Label x:Name="label_jobs_currentPath" Content="Label" HorizontalAlignment="Left" Margin="767,59,0,0" VerticalAlignment="Top" />
-                    <Label Content="Auflösung:" HorizontalAlignment="Left" Margin="680,85,0,0" VerticalAlignment="Top" />
-                    <Label x:Name="label_jobs_currentResolution" Content="Label" HorizontalAlignment="Left" Margin="767,85,0,0" VerticalAlignment="Top" />
-                    <Label Content="Bitrate:" HorizontalAlignment="Left" Margin="700,111,0,0" VerticalAlignment="Top" />
-                    <Label x:Name="label_jobs_currentBitrate" Content="Label" HorizontalAlignment="Left" Margin="767,111,0,0" VerticalAlignment="Top" />
-                    <Label Content="Bildrate:" HorizontalAlignment="Left" Margin="694,137,0,0" VerticalAlignment="Top" />
-                    <Label x:Name="label_jobs_currentFramerate" Content="Label" HorizontalAlignment="Left" Margin="767,137,0,0" VerticalAlignment="Top" />
+                    <Label Content="Codec:" HorizontalAlignment="Left" Margin="701,33,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
+                    <Label x:Name="label_jobs_currentCodec" Content="codec" HorizontalAlignment="Left" Margin="767,33,0,0" VerticalAlignment="Top" />
+                    <Label Content="Pfad:" HorizontalAlignment="Left" Margin="711,59,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
+                    <Label x:Name="label_jobs_currentPath" Content="path" HorizontalAlignment="Left" Margin="767,59,0,0" VerticalAlignment="Top" />
+                    <Label Content="Auflösung:" HorizontalAlignment="Left" Margin="680,85,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
+                    <Label x:Name="label_jobs_currentResolution" Content="res" HorizontalAlignment="Left" Margin="767,85,0,0" VerticalAlignment="Top" />
+                    <Label Content="Bitrate:" HorizontalAlignment="Left" Margin="700,111,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
+                    <Label x:Name="label_jobs_currentBitrate" Content="bitrate" HorizontalAlignment="Left" Margin="767,111,0,0" VerticalAlignment="Top" />
+                    <Label Content="Bildrate:" HorizontalAlignment="Left" Margin="694,137,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
+                    <Label x:Name="label_jobs_currentFramerate" Content="framerate" HorizontalAlignment="Left" Margin="767,137,0,0" VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
             <TabItem Header="Optionen">

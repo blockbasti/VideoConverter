@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 
 namespace VideoConverter
 {
@@ -13,6 +14,34 @@ namespace VideoConverter
         public static bool bExists()
         {
             return File.Exists( "ffprobe.exe" );
+        }
+
+        private static Process ffprobeproc = new Process();
+
+        private static string runFFprobe( string cmdline )
+        {
+            if(bExists())
+            {
+                ffprobeproc.StartInfo.FileName = "ffprobe.exe";
+                ffprobeproc.StartInfo.Arguments = cmdline;
+                ffprobeproc.StartInfo.CreateNoWindow = true;
+                ffprobeproc.StartInfo.UseShellExecute = false;
+                ffprobeproc.StartInfo.RedirectStandardOutput = true;
+                ffprobeproc.Start();
+
+                string output = ffprobeproc.StandardOutput.ReadToEnd();
+                                
+                return output;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public static string getInformationJSON( string _path )
+        {
+            return runFFprobe( "-v error -pretty -of json -show_streams " + _path );
         }
     }
 }

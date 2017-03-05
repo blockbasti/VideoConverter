@@ -52,5 +52,6 @@ namespace VideoConverter
 
             return regexVersion.Match( cmdout ).Value;
         }
+        
     }
 }

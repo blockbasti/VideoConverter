@@ -29,6 +29,7 @@ namespace VideoConverter
         {
             CheckFiles();
             label_settings_download_currentVersion.Content = "aktuelle Version: " + ffmpeg.getVersion();
+            dataGrid_jobs_SelectionChanged( null, null );
         }
 
         #region Settings
@@ -103,19 +104,6 @@ namespace VideoConverter
 
         #region JobList
 
-        private void dataGrid_jobs_MouseDown( object sender, System.Windows.Input.MouseButtonEventArgs e )
-        {
-            if(dataGrid_jobs.Items.CurrentPosition != -1)
-            {
-                selectedIndex = dataGrid_jobs.Items.CurrentPosition;
-                label_jobs_currentPath.Content = jobList[ selectedIndex ].path;
-                label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateVideo + "/" + jobList[ selectedIndex ].bitrateAudio;
-                label_jobs_currentFramerate.Content = jobList[ selectedIndex ].framerate;
-                label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecVideo + "/" + jobList[ selectedIndex ].codecAudio;
-                label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolution;
-            }
-        }
-
         //Test Button
         private void button_Click( object sender, RoutedEventArgs e )
         {
@@ -123,10 +111,10 @@ namespace VideoConverter
             _job.name = "Job" + new Random().Next( 0, 100 );
             _job.path = @"test.mp4";
             _job.target = "target path";
-            _job.type = "Video";
             _job.fillInformaton();
             jobList.Add( _job );
             dataGrid_jobs.Items.Refresh();
+            dataGrid_jobs_SelectionChanged( null, null );
         }
 
         /// <summary>
@@ -154,8 +142,13 @@ namespace VideoConverter
         private void button_jobs_deleteJob_Click( object sender, RoutedEventArgs e )
         {
             //TODO: Bestätigung
-            jobList.RemoveAt( dataGrid_jobs.Items.CurrentPosition );
-            dataGrid_jobs.Items.Refresh();
+            if(dataGrid_jobs.Items.CurrentPosition != -1)
+            {
+                jobList.RemoveAt( dataGrid_jobs.Items.CurrentPosition );
+                dataGrid_jobs.Items.Refresh();
+                dataGrid_jobs.SelectedIndex = -1;
+                dataGrid_jobs_SelectionChanged( null, null );
+            }
         }
 
         /// <summary>
@@ -166,6 +159,48 @@ namespace VideoConverter
             //TODO: Bestätigung
             jobList.Clear();
             dataGrid_jobs.Items.Refresh();
+            dataGrid_jobs.SelectedIndex = -1;
+            dataGrid_jobs_SelectionChanged( null, null );
+        }
+
+        private void dataGrid_jobs_SelectionChanged( object sender, System.Windows.Controls.SelectionChangedEventArgs e )
+        {
+            selectedIndex = dataGrid_jobs.Items.CurrentPosition;
+            if(dataGrid_jobs.Items.CurrentPosition != -1)
+            {
+                switch(jobList[ selectedIndex ].type)
+                {
+                    case "Video":
+                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateVideo;
+                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecVideo;
+                        label_jobs_currentFramerate.Content = jobList[ selectedIndex ].framerate;
+                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionVideo;
+                        break;
+
+                    case "Audio":
+                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateAudio;
+                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecAudio;
+                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionAudio;
+                        break;
+
+                    case "Video / Audio":
+                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateVideo + " | " + jobList[ selectedIndex ].bitrateAudio;
+                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecVideo + " | " + jobList[ selectedIndex ].codecAudio;
+                        label_jobs_currentFramerate.Content = jobList[ selectedIndex ].framerate;
+                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionVideo + " | " + jobList[ selectedIndex ].resolutionAudio;
+                        break;
+                }
+
+                label_jobs_currentPath.Content = jobList[ selectedIndex ].path;
+            }
+            else
+            {
+                label_jobs_currentPath.Content = "";
+                label_jobs_currentBitrate.Content = "";
+                label_jobs_currentFramerate.Content = "";
+                label_jobs_currentCodec.Content = "";
+                label_jobs_currentResolution.Content = "";
+            }
         }
 
         #endregion JobList

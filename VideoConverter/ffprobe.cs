@@ -41,7 +41,7 @@ namespace VideoConverter
 
         public static string getInformationJSON( string _path )
         {
-            return runFFprobe( "-v error -pretty -of json -show_streams " + _path );
+            return runFFprobe( "-v error -pretty -of json -show_streams \"" + _path + "\"");
         }
     }
 }

@@ -6,12 +6,13 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:VideoConverter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="601" Width="1003" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="601" Width="1293" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" WindowStartupLocation="CenterScreen">
+
     <Grid>
         <TabControl x:Name="tabControl" ClipToBounds="True" SnapsToDevicePixels="True">
             <TabItem Header="Jobs">
-                <Grid Background="White" Margin="0,0,-204,0" HorizontalAlignment="Left" Width="990">
-                    <DataGrid x:Name="dataGrid_jobs" Margin="10,10,393,10" BorderThickness="1" GridLinesVisibility="Horizontal" SelectionMode="Single" AlternatingRowBackground="#FFA3C795" IsReadOnly="True" AutoGenerateColumns="False" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" VerticalScrollBarVisibility="Visible" MouseDoubleClick="dataGrid_jobs_MouseDoubleClick" SelectionChanged="dataGrid_jobs_SelectionChanged">
+                <Grid Background="White" Margin="0,0,-4,0">
+                    <DataGrid x:Name="dataGrid_jobs" Margin="10,10,0,10" BorderThickness="1" GridLinesVisibility="Horizontal" SelectionMode="Single" AlternatingRowBackground="#FFA3C795" IsReadOnly="True" AutoGenerateColumns="False" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" VerticalScrollBarVisibility="Visible" MouseDoubleClick="dataGrid_jobs_MouseDoubleClick" SelectionChanged="dataGrid_jobs_SelectionChanged" HorizontalAlignment="Left" Width="587">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding name}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Name" Width="100" />
                             <DataGridTextColumn Binding="{Binding type}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Typ" Width="100" />
@@ -22,7 +23,7 @@
                     <Button x:Name="button" Content="add Test Item" HorizontalAlignment="Left" Margin="652,473,0,0" VerticalAlignment="Top" Width="130" Click="button_Click" />
                     <Button x:Name="button_preview" Content="Vorschau" HorizontalAlignment="Left" Margin="652,401,0,0" VerticalAlignment="Top" Width="75" Click="button_preview_Click" />
                     <CheckBox x:Name="checkBox_fullscreen" Content="Vollbild" HorizontalAlignment="Left" Margin="732,405,0,0" VerticalAlignment="Top" IsChecked="True" />
-                    <Button x:Name="button_jobs_addJob" Content="Datei hinzufügen" HorizontalAlignment="Left" Margin="652,353,0,0" VerticalAlignment="Top" Width="110" />
+                    <Button x:Name="button_jobs_addJob" Content="Datei hinzufügen" HorizontalAlignment="Left" Margin="652,353,0,0" VerticalAlignment="Top" Width="110" Click="button_jobs_addJob_Click" />
                     <Button x:Name="button_jobs_deleteJob" Content="Job löschen" HorizontalAlignment="Left" Margin="767,353,0,0" VerticalAlignment="Top" Width="80" Click="button_jobs_deleteJob_Click" />
                     <Button x:Name="button_jobs_clear" Content="alle entfernen" HorizontalAlignment="Left" Margin="852,353,0,0" VerticalAlignment="Top" Width="95" Click="button_jobs_clear_Click" />
                     <Label Content="Codec:" HorizontalAlignment="Left" Margin="701,33,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
@@ -35,6 +36,18 @@
                     <Label x:Name="label_jobs_currentBitrate" Content="bitrate" HorizontalAlignment="Left" Margin="767,111,0,0" VerticalAlignment="Top" />
                     <Label Content="Bildrate:" HorizontalAlignment="Left" Margin="694,137,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
                     <Label x:Name="label_jobs_currentFramerate" Content="framerate" HorizontalAlignment="Left" Margin="767,137,0,0" VerticalAlignment="Top" />
+                    <Label Content="Video Codec:" HorizontalAlignment="Left" Margin="667,188,0,0" VerticalAlignment="Top" />
+                    <Label Content="Audio Codec:" HorizontalAlignment="Left" Margin="667,219,0,0" VerticalAlignment="Top" />
+                    <TabControl x:Name="tabControl_codecOptions" HorizontalAlignment="Left" Height="507" Margin="957,10,0,0" VerticalAlignment="Top" Width="320" IsSynchronizedWithCurrentItem="True">
+                        <TabItem x:Name="tabItem_Video" Header="Video">
+                            
+                        </TabItem>
+                        <TabItem x:Name="tabItem_Audio" Header="Audio">
+                            
+                        </TabItem>
+                    </TabControl>
+                    <ComboBox x:Name="comboBox_codecVideo" HorizontalAlignment="Left" Margin="767,188,0,0" VerticalAlignment="Top" Width="120" />
+                    <ComboBox x:Name="comboBox_codecAudio" HorizontalAlignment="Left" Margin="767,219,0,0" VerticalAlignment="Top" Width="120" />
                 </Grid>
             </TabItem>
             <TabItem Header="Optionen">

@@ -13,6 +13,8 @@ namespace VideoConverter
         public string type { get; set; }
         public string path { get; set; }
         public string target { get; set; }
+        public Codec targetCodecVideo { get; set; }
+        public Codec targetCodecAudio{ get; set; }
 
         public string codecVideo { get; set; }
         public string codecAudio { get; set; }
@@ -31,14 +33,14 @@ namespace VideoConverter
 
             int streamIdxAudio = -1;
             int streamIdxVideo = -1;
-
+            
             for(int i = 0; i <= information[ "streams" ].Count - 1; i++)
             {
                 if(information[ "streams" ][ i ][ "codec_type" ] == "audio")
                 {
                     streamIdxAudio = i;
                 }
-                if(information[ "streams" ][ i ][ "codec_type" ] == "video" && information[ "streams" ][ i ][ "tags" ][ "title" ] != "Cover")
+                if(information[ "streams" ][ i ][ "codec_type" ] == "video" && information[ "streams" ][ i ][ "codec_name" ] != "mjpeg" && information[ "streams" ][ i ][ "tags" ][ "title" ] != "Cover")
                 {
                     streamIdxVideo = i;
                 }
@@ -50,7 +52,7 @@ namespace VideoConverter
                 codecVideo = information[ "streams" ][ streamIdxVideo ][ "codec_name" ];
                 resolutionVideo = information[ "streams" ][ streamIdxVideo ][ "coded_width" ] + "x" + information[ "streams" ][ 0 ][ "coded_height" ];
                 bitrateVideo = information[ "streams" ][ streamIdxVideo ][ "bit_rate" ];
-                framerate = int.Parse( information[ "streams" ][ streamIdxVideo ][ "avg_frame_rate" ].ToString().Split( '/' )[ 0 ] );
+                framerate = int.Parse( information[ "streams" ][ streamIdxVideo ][ "avg_frame_rate" ].ToString().Split( '/' )[ 0 ]);
             }
 
             if(streamIdxAudio != -1)

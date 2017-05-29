@@ -1,9 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Windows;
-using Newtonsoft.Json.Linq;
-using System.Threading.Tasks;
 
 namespace VideoConverter
 {
@@ -13,8 +9,9 @@ namespace VideoConverter
         public string type { get; set; }
         public string path { get; set; }
         public string target { get; set; }
+        public string targetPath { get; set; }
         public Codec targetCodecVideo { get; set; }
-        public Codec targetCodecAudio{ get; set; }
+        public Codec targetCodecAudio { get; set; }
 
         public string codecVideo { get; set; }
         public string codecAudio { get; set; }
@@ -26,21 +23,30 @@ namespace VideoConverter
 
         public Dictionary<string, string> information = new Dictionary<string, string>();
 
-        public void fillInformaton()
+        /// <summary>
+        /// Füllt den Job mit Informationen und gibt erfolg zurück.
+        /// </summary>
+        /// <returns>Befüllen erfolgreich</returns>
+        public bool fillInformaton()
         {
             string rawInformation = ffprobe.getInformationJSON( path );
             dynamic information = JsonConvert.DeserializeObject( rawInformation );
 
+            if(rawInformation == "{\r\n\r\n}\r\n")
+            {
+                return false;
+            }
+
             int streamIdxAudio = -1;
             int streamIdxVideo = -1;
-            
+
             for(int i = 0; i <= information[ "streams" ].Count - 1; i++)
             {
                 if(information[ "streams" ][ i ][ "codec_type" ] == "audio")
                 {
                     streamIdxAudio = i;
                 }
-                if(information[ "streams" ][ i ][ "codec_type" ] == "video" && information[ "streams" ][ i ][ "codec_name" ] != "mjpeg" && information[ "streams" ][ i ][ "tags" ][ "title" ] != "Cover")
+                if(information[ "streams" ][ i ][ "codec_type" ] == "video")
                 {
                     streamIdxVideo = i;
                 }
@@ -52,11 +58,13 @@ namespace VideoConverter
                 codecVideo = information[ "streams" ][ streamIdxVideo ][ "codec_name" ];
                 resolutionVideo = information[ "streams" ][ streamIdxVideo ][ "coded_width" ] + "x" + information[ "streams" ][ 0 ][ "coded_height" ];
                 bitrateVideo = information[ "streams" ][ streamIdxVideo ][ "bit_rate" ];
-                framerate = int.Parse( information[ "streams" ][ streamIdxVideo ][ "avg_frame_rate" ].ToString().Split( '/' )[ 0 ]);
+                framerate = int.Parse( information[ "streams" ][ streamIdxVideo ][ "avg_frame_rate" ].ToString().Split( '/' )[ 0 ] );
+                targetCodecVideo = new Codec( "copy" );
             }
 
             if(streamIdxAudio != -1)
             {
+                targetCodecAudio = new Codec( "copy" );
                 if(type == "Video")
                 {
                     type += " / Audio";
@@ -64,12 +72,18 @@ namespace VideoConverter
                 else
                 {
                     type = "Audio";
+                    targetCodecVideo = new Codec( "novideo" );
                 }
 
                 codecAudio = information[ "streams" ][ streamIdxAudio ][ "codec_name" ];
                 bitrateAudio = information[ "streams" ][ streamIdxAudio ][ "bit_rate" ];
                 resolutionAudio = information[ "streams" ][ streamIdxAudio ][ "sample_rate" ];
             }
+            else
+            {
+                targetCodecAudio = new Codec( "noaudio" );
+            }
+            return true;
         }
     }
 }

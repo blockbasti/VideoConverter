@@ -33,6 +33,10 @@ namespace VideoConverter
             }
         }
 
+        /// <summary>
+        /// Führt FFplay mit der angegeben Kommandozeile aus.
+        /// </summary>
+        /// <param name="cmdline">Kommandozeile</param>
         private static void runffplay( string cmdline )
         {
             if(bExists())

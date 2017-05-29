@@ -19,7 +19,7 @@ namespace VideoConverter
         /// </summary>
         private ObservableCollection<Job> jobList = new ObservableCollection<Job>();
 
-        private int selectedIndex = 0;
+        private int selectedIndex = -1;
 
         public MainWindow()
         {
@@ -28,12 +28,12 @@ namespace VideoConverter
             dataGrid_jobs.ItemsSource = jobList;
 
             //Codec Listen automatisch füllen
-            foreach(var item in Codec.videoCodecs)
+            foreach(var item in Codec.videoCodecs.Keys)
             {
                 comboBox_codecVideo.Items.Add( item );
             }
 
-            foreach(var item in Codec.audioCodecs)
+            foreach(var item in Codec.audioCodecs.Keys)
             {
                 comboBox_codecAudio.Items.Add( item );
             }
@@ -56,23 +56,22 @@ namespace VideoConverter
         private void button_settings_download_dlFFmpeg_Click( object sender, RoutedEventArgs e )
         {
             progressbar_settings_download_dlProgress.Value = 0;
-            System.Windows.Forms.Timer updatetimer = new System.Windows.Forms.Timer();
+            Timer updatetimer = new Timer();
             updatetimer.Interval = 100;
             updatetimer.Tick += ( object _sender, EventArgs _e ) =>
             {
-                progressbar_settings_download_dlProgress.Value = Updater.nGetProgress();
+                progressbar_settings_download_dlProgress.Value = Updater.getProgress();
                 label_settings_download_dlProgress.Content = progressbar_settings_download_dlProgress.Value.ToString() + " %";
-                if(Updater.nGetProgress() == 100)
+                if(Updater.getProgress() == 100)
                 {
                     updatetimer.Stop();
                     progressbar_settings_download_dlProgress.Value = 100;
                     label_settings_download_dlProgress.Content = "100 %";
                     CheckFiles();
                     label_settings_download_currentVersion.Content = "aktuelle Version: " + ffmpeg.getVersion();
-                    //this.ShowMessageAsync( "Download abgeschlossen!", "Der Download der FFmpeg Dateien war erfolgreich!", MessageDialogStyle.Affirmative );
                 }
             };
-            Task updateTask = new Task( () => Updater.UpdateFFmpeg() );
+            Task updateTask = new Task( () => Updater.updateFFmpeg( Environment.Is64BitOperatingSystem ) );
             updateTask.Start();
             updatetimer.Start();
         }
@@ -120,20 +119,6 @@ namespace VideoConverter
 
         #region JobList
 
-        //Test Button
-        private void button_Click( object sender, RoutedEventArgs e )
-        {
-            Job _job = new Job();
-            _job.name = "Job" + new Random().Next( 0, 100 );
-            _job.path = @"test.mp4";
-            _job.target = "target path";
-            _job.fillInformaton();
-            _job.targetCodecVideo = new Codec( "h264" );
-            _job.targetCodecAudio = new Codec( "aac" );
-            jobList.Add( _job );
-            dataGrid_jobs_SelectionChanged( null, null );
-        }
-
         /// <summary>
         /// Vorschau Button
         /// </summary>
@@ -154,11 +139,29 @@ namespace VideoConverter
         }
 
         /// <summary>
+        /// Öffnet einen Dialog um eine Datei auszuwählen und fügt Sie der Liste hinzu.
+        /// </summary>
+        private void button_jobs_addJob_Click( object sender, RoutedEventArgs e )
+        {
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.ShowDialog();
+            Job _job = new Job();
+            _job.path = fileDialog.FileName;
+            _job.targetPath = Environment.GetFolderPath( Environment.SpecialFolder.MyVideos );
+            _job.name = _job.path.Split( '\\' ).Last();
+            if(_job.fillInformaton())
+            {
+                jobList.Add( _job );
+            }
+
+            dataGrid_jobs_SelectionChanged( null, null );
+        }
+
+        /// <summary>
         /// Löscht den ausgewählten Job.
         /// </summary>
         private void button_jobs_deleteJob_Click( object sender, RoutedEventArgs e )
         {
-            //TODO: Bestätigung
             if(dataGrid_jobs.Items.CurrentPosition != -1)
             {
                 jobList.RemoveAt( dataGrid_jobs.Items.CurrentPosition );
@@ -172,90 +175,14 @@ namespace VideoConverter
         /// </summary>
         private void button_jobs_clear_Click( object sender, RoutedEventArgs e )
         {
-            //TODO: Bestätigung
             jobList.Clear();
             dataGrid_jobs.SelectedIndex = -1;
             dataGrid_jobs_SelectionChanged( null, null );
         }
 
-        private void updateCodecOptionDataGrids()
-        {
-            if(jobList[ selectedIndex ].targetCodecVideo != null)
-            {
-                generateOptions();
-            }
-
-            if(jobList[ selectedIndex ].targetCodecAudio != null)
-            {
-            }
-        }
-
-        private void dataGrid_jobs_SelectionChanged( object sender, System.Windows.Controls.SelectionChangedEventArgs e )
-        {
-            selectedIndex = dataGrid_jobs.Items.CurrentPosition;
-            if(dataGrid_jobs.Items.CurrentPosition != -1)
-            {
-                updateCodecOptionDataGrids();
-                switch(jobList[ selectedIndex ].type)
-                {
-                    case "Video":
-                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateVideo;
-                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecVideo;
-                        label_jobs_currentFramerate.Content = jobList[ selectedIndex ].framerate;
-                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionVideo;
-                        comboBox_codecVideo.IsEnabled = true;
-                        comboBox_codecAudio.IsEnabled = false;
-                        break;
-
-                    case "Audio":
-                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateAudio;
-                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecAudio;
-                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionAudio;
-                        comboBox_codecVideo.IsEnabled = false;
-                        comboBox_codecAudio.IsEnabled = true;
-                        break;
-
-                    case "Video / Audio":
-                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateVideo + " | " + jobList[ selectedIndex ].bitrateAudio;
-                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecVideo + " | " + jobList[ selectedIndex ].codecAudio;
-                        label_jobs_currentFramerate.Content = jobList[ selectedIndex ].framerate;
-                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionVideo + " | " + jobList[ selectedIndex ].resolutionAudio;
-                        comboBox_codecVideo.IsEnabled = true;
-                        comboBox_codecAudio.IsEnabled = true;
-                        break;
-                }
-
-                label_jobs_currentPath.Content = jobList[ selectedIndex ].path;
-            }
-            else
-            {
-                label_jobs_currentPath.Content = "";
-                label_jobs_currentBitrate.Content = "";
-                label_jobs_currentFramerate.Content = "";
-                label_jobs_currentCodec.Content = "";
-                label_jobs_currentResolution.Content = "";
-                comboBox_codecVideo.IsEnabled = false;
-                comboBox_codecAudio.IsEnabled = false;
-            }
-        }
-
         /// <summary>
-        /// Öffnet einen Dialog um eine Datei auszuwählen und fügt Sie der Liste hinzu.
+        /// Generiert die Anzeige für die Optionen des aktuellen Jobs.
         /// </summary>
-        private void button_jobs_addJob_Click( object sender, RoutedEventArgs e )
-        {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.ShowDialog();
-            Job _job = new Job();
-            _job.path = fileDialog.FileName;
-            _job.name = _job.path.Split( '\\' ).Last();
-            _job.fillInformaton();
-            jobList.Add( _job );
-            dataGrid_jobs_SelectionChanged( null, null );
-        }
-
-        #endregion JobList
-
         public void generateOptions()
         {
             RowDefinition CreateRowDefinition()
@@ -288,16 +215,18 @@ namespace VideoConverter
                 {
                     cb.Items.Add( item );
                 }
+
                 Grid.SetColumn( cb, column );
                 Grid.SetRow( cb, row );
+                cb.SelectedIndex = 0;
                 return cb;
             }
 
             TextBlock CreateTextBlock( string text, int row, int column )
             {
                 TextBlock tb = new TextBlock() { Text = text };
-                tb.MinWidth = 90;                
-                tb.Margin = new Thickness(10);
+                tb.MinWidth = 90;
+                tb.Margin = new Thickness( 10 );
                 Grid.SetColumn( tb, column );
                 Grid.SetRow( tb, row );
                 return tb;
@@ -310,84 +239,260 @@ namespace VideoConverter
             rootGrid.ColumnDefinitions.Add( new ColumnDefinition() { Width = new GridLength( 100.0 ) } );
             rootGrid.ColumnDefinitions.Add( new ColumnDefinition() { Width = new GridLength( 1, GridUnitType.Star ) } );
 
-            foreach(var option in jobList[ selectedIndex ].targetCodecVideo.options)
+            if(jobList[ selectedIndex ].targetCodecVideo.codecName != "novideo" && jobList[ selectedIndex ].targetCodecVideo.codecName != "copy" && jobList[ selectedIndex ].targetCodecVideo != null)
             {
-                rootGrid.RowDefinitions.Add( CreateRowDefinition() );
-                switch(option.displayAs)
+                foreach(var option in jobList[ selectedIndex ].targetCodecVideo.options)
                 {
-                    case "TextBox":
-                        var Label = CreateTextBlock( option.displayString, j, 0 );
-                        rootGrid.Children.Add( Label );
+                    rootGrid.RowDefinitions.Add( CreateRowDefinition() );
+                    switch(option.displayAs)
+                    {
+                        case "TextBox":
+                            var Label = CreateTextBlock( option.displayString, j, 0 );
+                            rootGrid.Children.Add( Label );
 
-                        var Textbox = CreateTextBox( j, 1 );
-                        Textbox.Text = option.value;
-                        Textbox.TextChanged += ( object sender, TextChangedEventArgs e ) => { option.value = Textbox.Text; };
+                            var Textbox = CreateTextBox( j, 1 );
+                            Textbox.Text = option.value;
+                            Textbox.TextChanged += ( object sender, TextChangedEventArgs e ) => { option.value = Textbox.Text; };
 
-                        rootGrid.Children.Add( Textbox );
-                        j++;
-                        break;
+                            rootGrid.Children.Add( Textbox );
+                            j++;
+                            break;
 
-                    case "ComboBox":
+                        case "ComboBox":
 
-                        var Label1 = CreateTextBlock( option.displayString, j, 0 );
-                        rootGrid.Children.Add( Label1 );
+                            var Label1 = CreateTextBlock( option.displayString, j, 0 );
+                            rootGrid.Children.Add( Label1 );
 
-                        var ComboBox = CreateComboBox( j, 1, option.items );
-                        ComboBox.SelectedValue= option.value ;
-                        ComboBox.SelectionChanged += ( object sender, SelectionChangedEventArgs e ) => { option.value = ComboBox.SelectedValue; };
-                        rootGrid.Children.Add( ComboBox );
-                        j++;
+                            var ComboBox = CreateComboBox( j, 1, option.items.Values.ToArray() );
+                            ComboBox.SelectedValue = option.value;
+                            ComboBox.SelectionChanged += ( object sender, SelectionChangedEventArgs e ) => { option.value = option.items.ToDictionary( kp => kp.Value, kp => kp.Key )[ ComboBox.SelectedValue.ToString() ]; };
+                            rootGrid.Children.Add( ComboBox );
+                            j++;
 
-                        break;
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
                 }
             }
-            tabItem_Video.Content = rootGrid;
+            scrollViewer_Video.Content = rootGrid;
 
             j = 0;
-
             rootGrid = new Grid();
             rootGrid.Margin = new Thickness( 10.0 );
             rootGrid.ColumnDefinitions.Add( new ColumnDefinition() { Width = new GridLength( 100.0 ) } );
             rootGrid.ColumnDefinitions.Add( new ColumnDefinition() { Width = new GridLength( 1, GridUnitType.Star ) } );
 
-            foreach(var option in jobList[ selectedIndex ].targetCodecAudio.options)
+            if(jobList[ selectedIndex ].targetCodecAudio.codecName != "noaudio" && jobList[ selectedIndex ].targetCodecAudio.codecName != "copy" && jobList[ selectedIndex ].targetCodecAudio != null)
             {
-                rootGrid.RowDefinitions.Add( CreateRowDefinition() );
-                switch(option.displayAs)
+                foreach(var option in jobList[ selectedIndex ].targetCodecAudio.options)
                 {
-                    case "TextBox":
-                        var Label = CreateTextBlock( option.displayString, j, 0 );
-                        rootGrid.Children.Add( Label );
+                    rootGrid.RowDefinitions.Add( CreateRowDefinition() );
+                    switch(option.displayAs)
+                    {
+                        case "TextBox":
+                            var Label = CreateTextBlock( option.displayString, j, 0 );
+                            rootGrid.Children.Add( Label );
 
-                        var Textbox = CreateTextBox( j, 1 );
-                        Textbox.Text = option.value;
-                        Textbox.TextChanged += ( object sender, TextChangedEventArgs e ) => { option.value = Textbox.Text; };
+                            var Textbox = CreateTextBox( j, 1 );
+                            Textbox.Text = option.value;
+                            Textbox.TextChanged += ( object sender, TextChangedEventArgs e ) => { option.value = Textbox.Text; };
 
-                        rootGrid.Children.Add( Textbox );
-                        j++;
-                        break;
+                            rootGrid.Children.Add( Textbox );
+                            j++;
+                            break;
 
-                    case "ComboBox":
+                        case "ComboBox":
 
-                        var Label1 = CreateTextBlock( option.displayString, j, 0 );
-                        rootGrid.Children.Add( Label1 );
+                            var Label1 = CreateTextBlock( option.displayString, j, 0 );
+                            rootGrid.Children.Add( Label1 );
 
-                        var ComboBox = CreateComboBox( j, 1, option.items );
-                        ComboBox.SelectedValue = option.value;
-                        ComboBox.SelectionChanged += ( object sender, SelectionChangedEventArgs e ) => { option.value = ComboBox.SelectedValue; };
-                        rootGrid.Children.Add( ComboBox );
-                        j++;
+                            var ComboBox = CreateComboBox( j, 1, option.items.Values.ToArray() );
+                            if(option.items[ option.value ] == null)
+                            { ComboBox.SelectedItem = 0; }
+                            else
+                            { ComboBox.SelectedItem = option.items[ option.value ]; };
+                            ComboBox.SelectionChanged += ( object sender, SelectionChangedEventArgs e ) => { option.value = option.value = option.items.ToDictionary( kp => kp.Value, kp => kp.Key )[ ComboBox.SelectedValue.ToString() ]; };
+                            rootGrid.Children.Add( ComboBox );
+                            j++;
 
-                        break;
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
                 }
             }
-            tabItem_Audio.Content = rootGrid;
+            scrollViewer_Audio.Content = rootGrid;
         }
+
+        /// <summary>
+        /// Aktualisiert die Einstellungsfenster für den aktuellen Job.
+        /// </summary>
+        private void updateCodecOptionPage()
+        {
+            if(jobList[ selectedIndex ].targetCodecVideo != null)
+            {
+                generateOptions();
+            }
+
+            if(jobList[ selectedIndex ].targetCodecAudio != null)
+            {
+                generateOptions();
+            }
+        }
+
+        /// <summary>
+        /// Aktualisiert alle Daten sobald der ausgewählte Job sich ändert.
+        /// </summary>
+        private void dataGrid_jobs_SelectionChanged( object sender, System.Windows.Controls.SelectionChangedEventArgs e )
+        {
+            selectedIndex = dataGrid_jobs.Items.CurrentPosition;
+            if(dataGrid_jobs.Items.CurrentPosition != -1)
+            {
+                updateCodecOptionPage();
+                button_targetPath.IsEnabled = true;
+                textBox_targetPath.IsEnabled = true;
+                textBox_targetPath.Text = jobList[ selectedIndex ].targetPath;
+                comboBox_codecVideo.SelectedValue = Codec.videoCodecs.FirstOrDefault( x => x.Value == jobList[ selectedIndex ].targetCodecVideo.codecName ).Key;
+                comboBox_codecAudio.SelectedValue = Codec.audioCodecs.FirstOrDefault( x => x.Value == jobList[ selectedIndex ].targetCodecAudio.codecName ).Key;
+
+                switch(jobList[ selectedIndex ].type)
+                {
+                    case "Video":
+                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateVideo;
+                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecVideo;
+                        label_jobs_currentFramerate.Content = jobList[ selectedIndex ].framerate;
+                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionVideo;
+                        comboBox_codecVideo.IsEnabled = true;
+                        comboBox_codecAudio.IsEnabled = false;
+                        jobList[ selectedIndex ].target = Codec.videoCodecs.FirstOrDefault( x => x.Value == jobList[ selectedIndex ].targetCodecVideo.codecName ).Key;
+                        break;
+
+                    case "Audio":
+                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateAudio;
+                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecAudio;
+                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionAudio;
+                        comboBox_codecVideo.IsEnabled = false;
+                        comboBox_codecAudio.IsEnabled = true;
+                        jobList[ selectedIndex ].target = Codec.audioCodecs.ToDictionary( kp => kp.Value, kp => kp.Key )[ jobList[ selectedIndex ].targetCodecAudio.codecName ];
+
+                        break;
+
+                    case "Video / Audio":
+                        label_jobs_currentBitrate.Content = jobList[ selectedIndex ].bitrateVideo + " | " + jobList[ selectedIndex ].bitrateAudio;
+                        label_jobs_currentCodec.Content = jobList[ selectedIndex ].codecVideo + " | " + jobList[ selectedIndex ].codecAudio;
+                        label_jobs_currentFramerate.Content = jobList[ selectedIndex ].framerate;
+                        label_jobs_currentResolution.Content = jobList[ selectedIndex ].resolutionVideo + " | " + jobList[ selectedIndex ].resolutionAudio;
+                        comboBox_codecVideo.IsEnabled = true;
+                        comboBox_codecAudio.IsEnabled = true;
+                        jobList[ selectedIndex ].target = Codec.videoCodecs.FirstOrDefault( x => x.Value == jobList[ selectedIndex ].targetCodecVideo.codecName ).Key + "|" + Codec.audioCodecs.FirstOrDefault( x => x.Value == jobList[ selectedIndex ].targetCodecAudio.codecName ).Key;
+
+                        break;
+                }
+                dataGrid_jobs.Items.Refresh();
+                label_jobs_currentPath.Content = jobList[ selectedIndex ].path;
+            }
+            else
+            {
+                label_jobs_currentPath.Content = "";
+                label_jobs_currentBitrate.Content = "";
+                label_jobs_currentFramerate.Content = "";
+                label_jobs_currentCodec.Content = "";
+                label_jobs_currentResolution.Content = "";
+                comboBox_codecVideo.IsEnabled = false;
+                comboBox_codecAudio.IsEnabled = false;
+                button_targetPath.IsEnabled = false;
+                textBox_targetPath.IsEnabled = false;
+                textBox_targetPath.Text = "";
+            }
+        }
+
+        /// <summary>
+        /// Öffnet das Fenster zum auswählen eines Zielordners.
+        /// </summary>
+        private void button_targetPath_Click( object sender, RoutedEventArgs e )
+        {
+            FolderBrowserDialog fb = new FolderBrowserDialog();
+            fb.ShowDialog();
+            textBox_targetPath.Text = fb.SelectedPath;
+            jobList[ selectedIndex ].targetPath = textBox_targetPath.Text;
+        }
+
+        /// <summary>
+        /// Aktualisiert den Zielpfad des ausgewählten Jobs.
+        /// </summary>
+        private void textBox_targetPath_TextChanged( object sender, TextChangedEventArgs e )
+        {
+            if(selectedIndex != -1)
+            {
+                jobList[ selectedIndex ].targetPath = textBox_targetPath.Text;
+            }
+        }
+
+        /// <summary>
+        /// Aktualisiert den Videocodec des ausgewählten Jobs.
+        /// </summary>
+        private void comboBox_codecVideo_DropDownClosed( object sender, EventArgs e )
+        {
+            if(selectedIndex != -1)
+            {
+                if(jobList[ selectedIndex ].targetCodecVideo.codecName != Codec.videoCodecs[ comboBox_codecVideo.SelectedValue.ToString() ])
+                {
+                    jobList[ selectedIndex ].targetCodecVideo = new Codec( Codec.videoCodecs[ comboBox_codecVideo.SelectedValue.ToString() ] );
+                    dataGrid_jobs_SelectionChanged( null, null );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Aktualisiert den Audiocodec des ausgewählten Jobs.
+        /// </summary>
+        private void comboBox_codecAudio_DropDownClosed( object sender, EventArgs e )
+        {
+            if(selectedIndex != -1)
+            {
+                if(jobList[ selectedIndex ].targetCodecAudio.codecName != Codec.audioCodecs[ comboBox_codecAudio.SelectedValue.ToString() ])
+                {
+                    jobList[ selectedIndex ].targetCodecAudio = new Codec( Codec.audioCodecs[ comboBox_codecAudio.SelectedValue.ToString() ] );
+                    dataGrid_jobs_SelectionChanged( null, null );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Startet den Umwandlungsprozess.
+        /// </summary>
+        private void button_jobs_convert_Click( object sender, RoutedEventArgs e )
+        {
+            int progress = 0;
+
+            progressBar_jobs_convert.Maximum = jobList.Count;
+            progressBar_jobs_convert.Value = 0;
+            Timer convertTimer = new Timer();
+            convertTimer.Interval = 100;
+            convertTimer.Tick += ( object _sender, EventArgs _e ) =>
+            {
+                progressBar_jobs_convert.Value = progress;
+                if(progress == jobList.Count)
+                {
+                    convertTimer.Stop();
+                    progressBar_jobs_convert.Value = 100;
+                }
+            };
+            Task convertTask = new Task( () =>
+            {
+                foreach(var job in jobList)
+                {
+                    ffmpeg.Convert( job );
+                    progress += 1;
+                }
+            } );
+            convertTask.Start();
+            convertTimer.Start();
+        }
+
+        #endregion JobList
     }
 }

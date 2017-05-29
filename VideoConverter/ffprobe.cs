@@ -18,6 +18,11 @@ namespace VideoConverter
 
         private static Process ffprobeproc = new Process();
 
+        /// <summary>
+        /// Führt FFprobe mit der angegeben Kommandozeile aus.
+        /// </summary>
+        /// <param name="cmdline">Kommandozeile</param>
+        /// <returns>Rückgabewert von FFprobe</returns>
         private static string runFFprobe( string cmdline )
         {
             if(bExists())
@@ -30,7 +35,7 @@ namespace VideoConverter
                 ffprobeproc.Start();
 
                 string output = ffprobeproc.StandardOutput.ReadToEnd();
-                                
+
                 return output;
             }
             else
@@ -39,9 +44,14 @@ namespace VideoConverter
             }
         }
 
+        /// <summary>
+        /// Fragt die Informationen einer Datei ab und gibt sie als JSON-String zurück.
+        /// </summary>
+        /// <param name="_path">Pfad der Datei</param>
+        /// <returns>Informationen als JSON-String</returns>
         public static string getInformationJSON( string _path )
         {
-            return runFFprobe( "-v error -pretty -of json -show_streams \"" + _path + "\"");
+            return runFFprobe( "-v error -pretty -of json -show_streams \"" + _path + "\"" );
         }
     }
 }

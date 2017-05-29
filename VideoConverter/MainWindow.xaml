@@ -6,13 +6,13 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:VideoConverter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="601" Width="1293" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" WindowStartupLocation="CenterScreen">
+        Title="Video Converter" Height="601" Width="1293" ResizeMode="CanMinimize" Loaded="MainWindow1_Loaded" WindowStartupLocation="CenterScreen">
 
     <Grid>
         <TabControl x:Name="tabControl" ClipToBounds="True" SnapsToDevicePixels="True">
             <TabItem Header="Jobs">
                 <Grid Background="White" Margin="0,0,-4,0">
-                    <DataGrid x:Name="dataGrid_jobs" Margin="10,10,0,10" BorderThickness="1" GridLinesVisibility="Horizontal" SelectionMode="Single" AlternatingRowBackground="#FFA3C795" IsReadOnly="True" AutoGenerateColumns="False" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" VerticalScrollBarVisibility="Visible" MouseDoubleClick="dataGrid_jobs_MouseDoubleClick" SelectionChanged="dataGrid_jobs_SelectionChanged" HorizontalAlignment="Left" Width="587">
+                    <DataGrid x:Name="dataGrid_jobs" Margin="10,10,0,10" BorderThickness="1" GridLinesVisibility="Horizontal" SelectionMode="Single" AlternatingRowBackground="#FFA3C795" IsReadOnly="True" AutoGenerateColumns="False" IsSynchronizedWithCurrentItem="True" VerticalScrollBarVisibility="Visible" MouseDoubleClick="dataGrid_jobs_MouseDoubleClick" SelectionChanged="dataGrid_jobs_SelectionChanged" HorizontalAlignment="Left" Width="587">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding name}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Name" Width="100" />
                             <DataGridTextColumn Binding="{Binding type}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Typ" Width="100" />
@@ -20,7 +20,6 @@
                             <DataGridTextColumn Binding="{Binding target}" CanUserReorder="False" ClipboardContentBinding="{x:Null}" Header="Zielformat" Width="100" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <Button x:Name="button" Content="add Test Item" HorizontalAlignment="Left" Margin="652,473,0,0" VerticalAlignment="Top" Width="130" Click="button_Click" />
                     <Button x:Name="button_preview" Content="Vorschau" HorizontalAlignment="Left" Margin="652,401,0,0" VerticalAlignment="Top" Width="75" Click="button_preview_Click" />
                     <CheckBox x:Name="checkBox_fullscreen" Content="Vollbild" HorizontalAlignment="Left" Margin="732,405,0,0" VerticalAlignment="Top" IsChecked="True" />
                     <Button x:Name="button_jobs_addJob" Content="Datei hinzufügen" HorizontalAlignment="Left" Margin="652,353,0,0" VerticalAlignment="Top" Width="110" Click="button_jobs_addJob_Click" />
@@ -29,7 +28,7 @@
                     <Label Content="Codec:" HorizontalAlignment="Left" Margin="701,33,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
                     <Label x:Name="label_jobs_currentCodec" Content="codec" HorizontalAlignment="Left" Margin="767,33,0,0" VerticalAlignment="Top" />
                     <Label Content="Pfad:" HorizontalAlignment="Left" Margin="711,59,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
-                    <Label x:Name="label_jobs_currentPath" Content="path" HorizontalAlignment="Left" Margin="767,59,0,0" VerticalAlignment="Top" />
+                    <Label x:Name="label_jobs_currentPath" Content="path" HorizontalAlignment="Left" Margin="767,59,0,0" VerticalAlignment="Top" Width="185" MaxWidth="190" />
                     <Label Content="Auflösung:" HorizontalAlignment="Left" Margin="680,85,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
                     <Label x:Name="label_jobs_currentResolution" Content="res" HorizontalAlignment="Left" Margin="767,85,0,0" VerticalAlignment="Top" />
                     <Label Content="Bitrate:" HorizontalAlignment="Left" Margin="700,111,0,0" VerticalAlignment="Top" SnapsToDevicePixels="True" />
@@ -40,19 +39,24 @@
                     <Label Content="Audio Codec:" HorizontalAlignment="Left" Margin="667,219,0,0" VerticalAlignment="Top" />
                     <TabControl x:Name="tabControl_codecOptions" HorizontalAlignment="Left" Height="507" Margin="957,10,0,0" VerticalAlignment="Top" Width="320" IsSynchronizedWithCurrentItem="True">
                         <TabItem x:Name="tabItem_Video" Header="Video">
-                            
+                            <ScrollViewer x:Name="scrollViewer_Video" />
                         </TabItem>
                         <TabItem x:Name="tabItem_Audio" Header="Audio">
-                            
+                            <ScrollViewer x:Name="scrollViewer_Audio" />
                         </TabItem>
                     </TabControl>
-                    <ComboBox x:Name="comboBox_codecVideo" HorizontalAlignment="Left" Margin="767,188,0,0" VerticalAlignment="Top" Width="120" />
-                    <ComboBox x:Name="comboBox_codecAudio" HorizontalAlignment="Left" Margin="767,219,0,0" VerticalAlignment="Top" Width="120" />
+                    <ComboBox x:Name="comboBox_codecVideo" HorizontalAlignment="Left" Margin="767,188,0,0" VerticalAlignment="Top" Width="120" DropDownClosed="comboBox_codecVideo_DropDownClosed" />
+                    <ComboBox x:Name="comboBox_codecAudio" HorizontalAlignment="Left" Margin="767,219,0,0" VerticalAlignment="Top" Width="120" DropDownClosed="comboBox_codecAudio_DropDownClosed" />
+                    <Button x:Name="button_targetPath" Content="Auswählen" HorizontalAlignment="Left" Margin="767,306,0,0" VerticalAlignment="Top" Width="75" Click="button_targetPath_Click" />
+                    <TextBox x:Name="textBox_targetPath" HorizontalAlignment="Left" Height="50" Margin="767,251,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" TextChanged="textBox_targetPath_TextChanged" VerticalScrollBarVisibility="Auto" />
+                    <Label Content="Zielordner:" HorizontalAlignment="Left" Margin="691,250,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.237,-1.038" />
+                    <Button x:Name="button_jobs_convert" Content="Starten" HorizontalAlignment="Left" Margin="602,478,0,0" VerticalAlignment="Top" Width="120" Click="button_jobs_convert_Click" FontWeight="Bold" FontSize="12" />
+                    <ProgressBar x:Name="progressBar_jobs_convert" HorizontalAlignment="Left" Margin="727,478,0,0" VerticalAlignment="Top" Width="100" Height="30" Background="White" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Optionen">
+            <TabItem Header="Informationen">
                 <Grid Background="White" Margin="0,1,0,-1">
-                    <GroupBox x:Name="groupBox" Header="Status" HorizontalAlignment="Left" VerticalAlignment="Top" Height="122" Width="167" Margin="5,5,0,0">
+                    <GroupBox Header="Status" HorizontalAlignment="Left" VerticalAlignment="Top" Height="122" Width="167" Margin="5,5,0,0">
                         <Grid HorizontalAlignment="Left" Height="84" VerticalAlignment="Top" Width="185" Margin="0,0,-30,-2">
                             <Label x:Name="label2" Content="FFmpeg:" HorizontalAlignment="Left" Margin="1,6,0,0" VerticalAlignment="Top" />
                             <Label x:Name="label3" Content="FFplay:" HorizontalAlignment="Left" Margin="1,32,0,0" VerticalAlignment="Top" />
@@ -62,7 +66,7 @@
                             <Label x:Name="label_settings_status_ffprobe" Content="nicht gefunden" HorizontalAlignment="Center" Margin="71,58,24,0" VerticalAlignment="Top" Foreground="Red" />
                         </Grid>
                     </GroupBox>
-                    <GroupBox x:Name="groupBox1" Header="Download/Update" HorizontalAlignment="Left" Margin="5,132,0,0" VerticalAlignment="Top" Height="105" Width="252">
+                    <GroupBox Header="Download/Update" HorizontalAlignment="Left" Margin="5,132,0,0" VerticalAlignment="Top" Height="105" Width="252">
                         <Grid Margin="0,0,-2,-2">
                             <ProgressBar x:Name="progressbar_settings_download_dlProgress" HorizontalAlignment="Left" Height="25" Margin="1,10,0,0" VerticalAlignment="Top" Width="100">
                                 <ProgressBar.Background>
@@ -72,6 +76,15 @@
                             <Button x:Name="button_settings_download_dlFFmpeg" Content="FFMpeg downloaden" HorizontalAlignment="Left" Margin="111,10,0,0" VerticalAlignment="Top" Width="125" Height="20" Click="button_settings_download_dlFFmpeg_Click" />
                             <Label x:Name="label_settings_download_dlProgress" Content="0 %" HorizontalAlignment="Left" Margin="58,10,0,0" VerticalAlignment="Top" Height="25" Width="43" />
                             <Label x:Name="label_settings_download_currentVersion" Content="aktuelle Version: " HorizontalAlignment="Left" Margin="1,38,0,0" VerticalAlignment="Top" Width="231" />
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Informationen" HorizontalAlignment="Left" Height="275" Margin="5,242,0,0" VerticalAlignment="Top" Width="477">
+                        <Grid >
+                            <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="446" FontWeight="Bold"><Run Text="Für d"/><Run Text="ie"/><Run Text=" Video"/><Run Text="codec"/><Run Text="s VP8/VP9 muss der Audiocodec Opus gewählt werden, da sonst keine Datei erstellt wird."/></TextBlock>
+                            <TextBlock HorizontalAlignment="Left" Margin="10,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="15" Width="446" Text="Die häufigste und auch kompatibelste Kombination an Codecs ist H264/AAC." FontWeight="Bold"/>
+                            <TextBlock HorizontalAlignment="Left" Margin="10,67,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="446" FontWeight="Bold"><Run Text="Sollte keine funktionierende Datei erstellt werden, kann es sein, dass die "/><Run Text="E"/><Run Text="instellungen"/><Run Text=" des Codecs"/><Run Text=" fehlerhaft sind."/></TextBlock>
+                            <TextBlock HorizontalAlignment="Left" Margin="10,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="32" Width="446" FontWeight="Bold"><Run Text="Bei numerischen Angaben werden die "/><Run Text="Suf"/><Run Text="fixe &quot;k&quot; = x1.000 und "/><Run Text="                    "/><Run Text="&quot;m&quot; = x1.000.000 unterstützt. Beispiel: 10k = 10.000"/></TextBlock>
+                            <TextBlock HorizontalAlignment="Left" Margin="10,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="46" Width="446" FontWeight="Bold"><Run Text="Wenn eine Option nicht beachtet werden soll, kann diese leer gelassen werden und wird ignoriert. Dann wird entweder ein Standartwert genutzt oder es wird keine funktionierende Datei erstell"/><Run Text="t"/><Run Text="."/></TextBlock>
                         </Grid>
                     </GroupBox>
                 </Grid>

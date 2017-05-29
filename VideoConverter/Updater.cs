@@ -10,21 +10,15 @@ namespace VideoConverter
     /// </summary>
     internal class Updater
     {
-        private static int nProgress = 0;
-        private static bool b64Bit = false;
-
-        public Updater( bool _b64Bit = false )
-        {
-            b64Bit = _b64Bit;
-        }
+        private static int progress = 0;
 
         /// <summary>
         /// Lädt FFmpeg herunter oder updatet es.
         /// </summary>
-        public static async void UpdateFFmpeg()
+        public static async void updateFFmpeg( bool _64Bit )
         {
             WebClient webc = new WebClient();
-            webc.DownloadProgressChanged += new DownloadProgressChangedEventHandler( SetProgress );
+            webc.DownloadProgressChanged += new DownloadProgressChangedEventHandler( setProgress );
 
             //Entfernt alte Dateien
             if(File.Exists( "Update.zip" ))
@@ -32,46 +26,46 @@ namespace VideoConverter
                 File.Delete( "Update.zip" );
             }
 
-            if(b64Bit)
+            if(_64Bit)
             {
                 await webc.DownloadFileTaskAsync( "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip", "Update.zip" );
             }
             else
             {
-                await webc.DownloadFileTaskAsync( "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip", "Update.zip" );
+                await webc.DownloadFileTaskAsync( "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win32-static.zip", "Update.zip" );
             }
             webc.Dispose();
-            SetupFiles();
+            setupFiles();
         }
 
         /// <summary>
         /// Fragt den Fortschritt des Updates ab.
         /// </summary>
-        public static int nGetProgress()
+        public static int getProgress()
         {
-            return nProgress;
+            return progress;
         }
 
-        private static void SetProgress( object sender, DownloadProgressChangedEventArgs e )
+        private static void setProgress( object sender, DownloadProgressChangedEventArgs e )
         {
-            nProgress = e.ProgressPercentage / 2;
+            progress = e.ProgressPercentage / 2;
         }
 
         /// <summary>
         /// Entpackt die Dateien des Downloads.
         /// </summary>
-        private static void SetupFiles()
+        private static void setupFiles()
         {
-            nProgress = 50;
+            progress = 50;
             ZipFile zip = ZipFile.Read( "Update.zip" );
             zip.FlattenFoldersOnExtract = true;
-            nProgress += 12;
+            progress += 12;
             zip[ 3 ].Extract( Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently );
-            nProgress += 12;
+            progress += 12;
             zip[ 4 ].Extract( Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently );
-            nProgress += 12;
+            progress += 12;
             zip[ 5 ].Extract( Environment.CurrentDirectory, ExtractExistingFileAction.OverwriteSilently );
-            nProgress += 14;
+            progress += 14;
 
             zip.Dispose();
             if(File.Exists( "Update.zip" ))
